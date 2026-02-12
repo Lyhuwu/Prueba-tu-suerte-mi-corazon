@@ -3,14 +3,14 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Prueba tu suerte y canjea cuando quieras✨</title>
+    <title>La Suerte de Sofi ✨</title>
     <link rel="stylesheet" href="style.css">
     <link href="https://fonts.googleapis.com/css2?family=Fredoka:wght@400;600&family=Pacifico&display=swap" rel="stylesheet">
 </head>
 <body>
 
     <div class="cuponera-container">
-        <h1>✨ Tu Suerte Hoy ✨</h1>
+        <h1>✨ Tu Suerte de Hoy ✨</h1>
         <p class="instrucciones">Elige una galleta para descubrir tu premio:</p>
         
         <div id="galletas-flex">
@@ -31,7 +31,7 @@
                     <p class="ticket-header">🎟️ VÁLIDO POR:</p>
                     <h3 id="texto-cupon"></h3>
                     <div class="linea-punteada"></div>
-                    <p class="ticket-footer">❤️ Canjeable cuando tu quieras❤️</p>
+                    <p class="ticket-footer">❤️ Canjeable con tu equipo favorito ❤️</p>
                 </div>
             </div>
             
@@ -45,9 +45,31 @@
     <div class="billetera-container">
         <h2>👛 Mis Cupones Guardados</h2>
         <div id="lista-cupones">
-            <p id="mensaje-vacio">Aún no has guardado cupones...</p>
+            </div>
+        
+        <p style="text-align: center; margin-top: 20px;">
+            <button class="btn-borrar-todo" onclick="borrarTodo()">🗑️ Borrar historial</button>
+        </p>
+    </div>
+
+    <div id="modal-confirmacion" class="modal-overlay hidden">
+        <div class="modal-content">
+            <img src="https://media.giphy.com/media/v1.Y2lkPTc5MGI3NjExM3Z5Z3Z5Z3Z5Z3Z5Z3Z5Z3Z5Z3Z5Z3Z5Z3Z5Z3Z5/l4pTfx2qLSznacZ2M/giphy.gif" alt="Abrazo" class="modal-gif">
+            
+            <h3>⚠️ ¡Espera un poquito!</h3>
+            <p class="modal-texto">
+                Para hacerlo válido, <b>tómale captura</b> 📸 y mándamela.
+                <br><br>
+                Recuerda que una vez que le des a "Confirmar", desaparecerá de tu billetera.
+                <br>
+                <small>(Pero puedes volver mañana por más 😉)</small>
+            </p>
+
+            <div class="modal-botones">
+                <button class="btn-confirmar" onclick="confirmarCanje()">¡Ya tomé la foto! ✅</button>
+                <button class="btn-cancelar" onclick="cerrarModal()">Cancelar ❌</button>
+            </div>
         </div>
-        <button class="btn-borrar-todo" onclick="borrarTodo()">🗑️ Borrar todo</button>
     </div>
 
     <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
