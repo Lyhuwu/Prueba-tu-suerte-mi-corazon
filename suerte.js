@@ -21,131 +21,129 @@ const listaOriginal = [
     "Una tarde juntitas 🌇"
 ];
 
-// Variables de control
+// Variables de estado
 let disponibles = [];
 let cuponActualTexto = "";
+let indiceParaBorrar = null; // Para saber qué cupón borrar en el modal
 
-// Al cargar la página
+// --- INICIALIZACIÓN ---
 document.addEventListener('DOMContentLoaded', () => {
-    // Inicializamos la billetera visualmente
     cargarCuponesGuardados();
-    
-    // Llenamos la baraja de cartas (copiamos la lista original)
-    disponibles = [...listaOriginal];
+    disponibles = [...listaOriginal]; // Llenamos la baraja
 });
 
-// --- FUNCIÓN PRINCIPAL: SACAR CUPÓN ---
+// --- FUNCIONES DEL JUEGO ---
 function revelarCupon() {
-    // 1. Si ya salieron todos, volvemos a llenar la baraja
+    // Si se acaban, rellenamos
     if (disponibles.length === 0) {
         disponibles = [...listaOriginal];
-        // Opcional: Avisar que se reinició
-        // alert("¡Se acabaron los cupones! Barajando de nuevo... 🔀");
     }
 
-    // 2. Elegir uno al azar de los DISPONIBLES
+    // Elegir al azar y quitar de disponibles
     const indiceAleatorio = Math.floor(Math.random() * disponibles.length);
     const fraseGanadora = disponibles[indiceAleatorio];
-    
-    // Guardamos el texto actual para poder guardarlo en la billetera luego
     cuponActualTexto = fraseGanadora;
-
-    // 3. ¡IMPORTANTE! Lo sacamos de la lista para que no se repita seguido
     disponibles.splice(indiceAleatorio, 1);
 
-    // 4. Mostrar en pantalla
+    // Mostrar
     document.getElementById('texto-cupon').innerText = fraseGanadora;
     document.getElementById('galletas-flex').classList.add('hidden');
     document.getElementById('cupon-resultado').classList.remove('hidden');
     
-    // Reactivar botón de guardar
+    // Resetear botón guardar
     const btnGuardar = document.getElementById('btn-guardar');
     btnGuardar.innerText = "📥 Guardar en mi Billetera";
     btnGuardar.disabled = false;
     btnGuardar.style.background = "#ff8fa3";
 
-    // 5. ¡CONFETI!
     lanzarConfeti();
 }
 
-// --- VOLVER A LAS GALLETAS ---
 function resetGalletas() {
     document.getElementById('galletas-flex').classList.remove('hidden');
     document.getElementById('cupon-resultado').classList.add('hidden');
 }
 
-// --- GUARDAR EN BILLETERA (LOCALSTORAGE) ---
+// --- BILLETERA (LOCALSTORAGE) ---
 function guardarCupon() {
-    // Leemos lo que ya hay guardado en el navegador
     let guardados = JSON.parse(localStorage.getItem('misCuponesSofi')) || [];
     
-    // Verificamos si ya lo tiene guardado (para no tener duplicados en la billetera)
     if (!guardados.includes(cuponActualTexto)) {
         guardados.push(cuponActualTexto);
         localStorage.setItem('misCuponesSofi', JSON.stringify(guardados));
         
-        // Actualizamos la lista visual
         cargarCuponesGuardados();
         
-        // Cambiar botón a verde
+        // Feedback visual
         const btnGuardar = document.getElementById('btn-guardar');
         btnGuardar.innerText = "¡Guardado! ✅";
         btnGuardar.disabled = true;
         btnGuardar.style.background = "#4ecdc4";
     } else {
-        alert("¡Ya guardaste este cupón antes! 😉");
+        // Pequeña alerta nativa solo para avisar duplicado
+        alert("¡Ya tienes este cupón guardado! 😉");
     }
 }
 
-// --- MOSTRAR LA BILLETERA ---
 function cargarCuponesGuardados() {
     let guardados = JSON.parse(localStorage.getItem('misCuponesSofi')) || [];
     const contenedor = document.getElementById('lista-cupones');
     
     if (guardados.length === 0) {
-        contenedor.innerHTML = '<p id="mensaje-vacio">Aún no has guardado cupones... ¡Abre una galleta!</p>';
+        contenedor.innerHTML = '<p style="color:#999; font-style:italic;">Aún no has guardado cupones...</p>';
         return;
     }
 
     let html = '';
-    // Recorremos cada cupón guardado para crear su ticket
     guardados.forEach((cupon, index) => {
         html += `
             <div class="mini-ticket">
                 <span>${cupon}</span>
-                <button class="btn-usar" onclick="usarCupon(${index})">Usar</button>
+                <button class="btn-usar" onclick="abrirModal(${index})">Usar</button>
             </div>
         `;
     });
     contenedor.innerHTML = html;
 }
 
-// --- USAR (BORRAR) UN CUPÓN ---
-function usarCupon(index) {
-    if(!confirm("¿Segura que quieres canjear este cupón? Se borrará de la lista.")) return;
-
-    let guardados = JSON.parse(localStorage.getItem('misCuponesSofi')) || [];
-    guardados.splice(index, 1); // Elimina 1 elemento en la posición index
-    localStorage.setItem('misCuponesSofi', JSON.stringify(guardados));
-    
-    cargarCuponesGuardados();
+// --- LÓGICA DEL MODAL (VENTANA MÁGICA) ---
+function abrirModal(index) {
+    indiceParaBorrar = index;
+    document.getElementById('modal-confirmacion').classList.remove('hidden');
 }
 
-// --- BORRAR TODO ---
+function cerrarModal() {
+    document.getElementById('modal-confirmacion').classList.add('hidden');
+    indiceParaBorrar = null;
+}
+
+function confirmarCanje() {
+    if (indiceParaBorrar !== null) {
+        let guardados = JSON.parse(localStorage.getItem('misCuponesSofi')) || [];
+        
+        // Borrar el cupón
+        guardados.splice(indiceParaBorrar, 1);
+        localStorage.setItem('misCuponesSofi', JSON.stringify(guardados));
+        
+        cargarCuponesGuardados();
+        cerrarModal();
+        
+        // Opcional: Lanza un poquito de confeti al confirmar
+        lanzarConfeti();
+    }
+}
+
 function borrarTodo() {
-    if(confirm("¿Segura que quieres borrar todos tus cupones guardados?")) {
+    if(confirm("¿Segura que quieres borrar todo el historial?")) {
         localStorage.removeItem('misCuponesSofi');
         cargarCuponesGuardados();
     }
 }
 
-// --- EFECTO DE CONFETI ---
+// --- EFECTOS VISUALES ---
 function lanzarConfeti() {
     var count = 200;
-    var defaults = {
-        origin: { y: 0.7 },
-        zIndex: 9999
-    };
+    var defaults = { origin: { y: 0.7 }, zIndex: 12000 }; // Z-index alto para verse sobre todo
 
     function fire(particleRatio, opts) {
         confetti(Object.assign({}, defaults, opts, {
