@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Prueba tu suerte y canjea cuando quieras✨</title>
+    <link rel="stylesheet" href="style.css">
+    <link href="https://fonts.googleapis.com/css2?family=Fredoka:wght@400;600&family=Pacifico&display=swap" rel="stylesheet">
+</head>
+<body>
+
+    <div class="cuponera-container">
+        <h1>✨ Tu Suerte Hoy ✨</h1>
+        <p class="instrucciones">Elige una galleta para descubrir tu premio:</p>
+        
+        <div id="galletas-flex">
+            <div class="cookie-wrapper" onclick="revelarCupon()">
+                <span class="cookie">🥠</span>
+            </div>
+            <div class="cookie-wrapper" onclick="revelarCupon()">
+                <span class="cookie">🥠</span>
+            </div>
+            <div class="cookie-wrapper" onclick="revelarCupon()">
+                <span class="cookie">🥠</span>
+            </div>
+        </div>
+
+        <div id="cupon-resultado" class="hidden">
+            <div class="ticket">
+                <div class="ticket-content">
+                    <p class="ticket-header">🎟️ VÁLIDO POR:</p>
+                    <h3 id="texto-cupon"></h3>
+                    <div class="linea-punteada"></div>
+                    <p class="ticket-footer">❤️ Canjeable cuando tu quieras❤️</p>
+                </div>
+            </div>
+            
+            <div class="botones-accion">
+                <button id="btn-guardar" class="btn-guardar" onclick="guardarCupon()">📥 Guardar en mi Billetera</button>
+                <button class="btn-reset" onclick="resetGalletas()">Probar suerte otra vez</button>
+            </div>
+        </div>
+    </div>
+
+    <div class="billetera-container">
+        <h2>👛 Mis Cupones Guardados</h2>
+        <div id="lista-cupones">
+            <p id="mensaje-vacio">Aún no has guardado cupones...</p>
+        </div>
+        <button class="btn-borrar-todo" onclick="borrarTodo()">🗑️ Borrar todo</button>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
+    <script src="suerte.js"></script>
+</body>
+</html>
